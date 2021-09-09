@@ -6,16 +6,6 @@ General notes on Debian Buster installation on flea market PCs.
 
 https://kb.synology.com/en-my/DSM/tutorial/How_can_I_recover_data_from_my_DiskStation_using_a_PC
 
-## NVTV
-
-Fuck me, got it working
-
-```
-nvtv --help
-nvtv -n 
-# -n is to use "/dev/nv" cards, holy shit
-```
-
 ## Snap Store
 
 Everything installed correctly, but Launcher apps and PATH do not work:
@@ -32,9 +22,7 @@ emulate sh -c 'source /etc/profile.d/apps-bin-path.sh'
 # copy desktop files (do this after each install :( ):
 sudo cp /var/lib/snapd/desktop/applications/* /usr/share/applications
 
-
 ```
-
 
 ## NVIDIA Installation
 
@@ -49,6 +37,61 @@ deb http://deb.debian.org/debian/ sid main contrib non-free
 # 
 sudo apt install nvidia-legacy-XXXX-driver firmware-misc-nonfree
 ```
+
+## NVTV
+
+```
+sudo apt build-dep nvtv
+sudo ./configure
+sudo make && sudo ./src/nvtv 
+```
+
+**IMPORTANT**
+
+* nvtv must be run with **sudo**
+* from the source comments, we see stuff like:
+
+```
+# WORKING
+GeForce2 MX card and Brooktree 869 chip
+Brooktree Huge
+Geforce2Go
+Voodoo3
+
+# NOT WORKING
+GeForce4 MX, GeForce4 GO or GeForce MX GPU card
+Riva128
+```
+
+**IMPORTANT**
+
+* card definitions list header is added to this repo (`xf86PciInfo.h`)- **this is the way**
+* now we need to add a card definition to this, which we need to find various PCI informations ("probing PCI")...
+* `lspci` gives us everything we neeed, either `lspci` or `lspci -nn`
+
+```
+lspci -nn
+
+# [XXXX:XXXX] is the vendor ID (ie. NVIDIA, already aadded) and device ID (which we add)
+# so for NVIDIA, online is says "10DE" which exists, and "05e3" which hasn't been added
+# also confirmed here: https://envytools.readthedocs.io/en/latest/hw/pciid.html
+# and we add this to xf86PciInfo.h
+
+sudo ./src/nvtv -N -d
+
+# fails as "bnv open" as it tries communicating
+
+```
+
+**CONCLUSION**
+
+NVTV finishes around early 2000s - hardware of GPUs with TV out probably changes since then - lost to the sands of time.
+
+## NVIDIA Overscan / Underscan
+
+* NVIDIA X Server Settings - seems to only effect drawing to the texture output, so switching to 800x600 (closest to 720x576) and they playing with overscan, you will see overscan. Set to 1024x768 and you don't see it at all, set to 640x400 and you see a lot of it
+* NVTV seems to be the way to go - but doesn't do anything?
+
 
 ## Bitwig Installation
 
