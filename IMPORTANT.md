@@ -2,6 +2,18 @@
 
 General notes on Debian Buster installation on flea market PCs.
 
+## BULLSEYE / BUSTER (Wayland etc)
+
+Disable Wayland
+
+```
+
+sudo nano /etc/gdm3/custom.conf
+WaylandEnable=false
+```
+
+https://gist.github.com/oprizal/998635a2ff5cbecb0519455c12b2994f
+
 ## Synology Recovery
 
 https://kb.synology.com/en-my/DSM/tutorial/How_can_I_recover_data_from_my_DiskStation_using_a_PC
